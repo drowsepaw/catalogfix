@@ -114,6 +114,12 @@
       <table><thead><tr><th></th><th>Where</th><th>What’s wrong</th></tr></thead><tbody id="attnBody"></tbody></table>
     </div>
 
+    <div class="card hidden" id="dfyCard">
+      <h2 class="sec">Some of these need a human, not a download</h2>
+      <p class="secsub" style="margin-bottom:14px">Missing titles, duplicate variants and broken data can't be invented by a tool — someone has to decide what the right values are. The team behind CatalogFix builds and repairs Shopify stores for a living. Start with a free written audit, and we'll map exactly what your catalog needs.</p>
+      <a class="btn ghost" href="https://drowsepaw.com/pages/services" target="_blank" rel="noopener">Get a free store audit →</a>
+    </div>
+
     <div class="card paybox" id="payCard">
       <div class="amount">$19</div>
       <div class="per">one-time, per corrected file — no subscription</div>
@@ -121,6 +127,7 @@
         <li>Every automatic correction above, applied</li>
         <li>A clean, import-ready Shopify CSV (UTF-8, correct formatting)</li>
         <li>The full problem report stays free, forever</li>
+        <li><b style="color:var(--ink)">The CatalogFix guarantee:</b> if your corrected file still fails to import for a reason our check marked as fixed, we make it right or refund you</li>
       </ul>
       <div id="payActions">
         <a class="btn" id="payBtn" href="#" target="_blank" rel="noopener">Unlock my corrected file — $19</a>
@@ -131,6 +138,7 @@
         <button class="btn" id="downloadBtn" type="button">Download corrected CSV</button>
         <div class="fineprint">Corrections applied. Items under “Needs your eye” are unchanged — fix those in the file and re-run the free check any time.</div>
       </div>
+      <div class="fineprint" style="margin-top:16px">Fixing catalogs every week? A <b style="color:var(--dim)">5-fix pack for $49</b> is coming — every free check helps us size it. Agency plans come later, only if you ask for them.</div>
     </div>
 
     <div class="ok-banner hidden" id="cleanBanner">This file is clean — no errors, no warnings, nothing to fix. Shopify should take it as-is. 🎉</div>
@@ -138,6 +146,21 @@
     <div style="text-align:center;margin-top:18px">
       <button class="btn ghost" id="resetBtn" type="button">Check another file</button>
     </div>
+  </section>
+
+  <section class="card" style="margin-top:22px">
+    <h2 class="sec">Common Shopify CSV import errors — and how to fix them</h2>
+    <p class="secsub">The failures merchants hit most, explained plainly. Or skip the reading: the free check above finds them in your file automatically.</p>
+    <table><tbody>
+      <tr><td><a href="errors-invalid-handle.html" style="color:var(--brand)">Invalid handle</a></td><td style="color:var(--dim)">Spaces, capitals and symbols in the Handle column</td></tr>
+      <tr><td><a href="errors-price-format.html" style="color:var(--brand)">Price is not a number</a></td><td style="color:var(--dim)">Currency symbols, thousands commas, decimal commas</td></tr>
+      <tr><td><a href="errors-duplicate-variant.html" style="color:var(--brand)">Duplicate variant</a></td><td style="color:var(--dim)">The same option combination twice in one product</td></tr>
+      <tr><td><a href="errors-inventory-policy.html" style="color:var(--brand)">Inventory policy error</a></td><td style="color:var(--dim)">Must be exactly "deny" or "continue"</td></tr>
+      <tr><td><a href="errors-boolean-values.html" style="color:var(--brand)">TRUE / FALSE values</a></td><td style="color:var(--dim)">"yes" and "1" silently import as false</td></tr>
+      <tr><td><a href="errors-image-src-url.html" style="color:var(--brand)">Image Src is not a valid URL</a></td><td style="color:var(--dim)">Missing https://, local paths, images that never arrive</td></tr>
+      <tr><td><a href="errors-missing-title.html" style="color:var(--brand)">Title can't be blank</a></td><td style="color:var(--dim)">The first row of a product carries no title</td></tr>
+      <tr><td><a href="errors-unquoted-commas-ragged-rows.html" style="color:var(--brand)">Row has too many fields</a></td><td style="color:var(--dim)">Unquoted commas shifting every column in the row</td></tr>
+    </tbody></table>
   </section>
 
   <footer>
@@ -215,6 +238,7 @@
     }).join('') || '<tr><td colspan="3" style="color:var(--dim)">Nothing needs your attention.</td></tr>';
     $('attnCard').style.display = attn.length ? '' : 'none';
 
+    $('dfyCard').classList.toggle('hidden', s.errors===0);
     var clean = !fatal.length && s.errors===0 && s.warnings===0 && s.fixes===0;
     $('cleanBanner').classList.toggle('hidden', !clean);
     $('payCard').style.display = (fatal.length || clean) ? 'none' : '';

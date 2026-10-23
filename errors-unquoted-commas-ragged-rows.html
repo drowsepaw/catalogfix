@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopify CSV Import Fails: Row Has Too Many Fields — Unquoted Commas</title>
+<meta name="description" content="Row 14 has 22 fields but the file has 21 columns — an unquoted comma is splitting a text field in two. What causes it, how to fix it by hand, and a free tool that finds and fixes it in your whole file at once.">
+<style>:root{--bg:#0b0f14;--panel:#121822;--line:#232e3f;--ink:#e8eef6;--dim:#93a3b8;--faint:#5d6f86;--brand:#2dd4a7;--brand-ink:#06231b}*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}.wrap{max-width:760px;margin:0 auto;padding:0 20px}header{padding:26px 0 6px}.logo{font-size:22px;font-weight:800;color:var(--ink);text-decoration:none}.logo span{color:var(--brand)}h1{font-size:clamp(26px,4.6vw,38px);line-height:1.18;letter-spacing:-.02em;margin:30px 0 14px}h2{font-size:20px;margin:28px 0 8px}p,li{color:var(--dim)}p b,li b{color:var(--ink)}ol,ul{padding-left:22px}li{margin:6px 0}code{background:#171f2c;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:14px;color:var(--ink)}.cta{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin:30px 0;text-align:center}.cta p{margin-bottom:14px}.btn{display:inline-block;border-radius:10px;padding:13px 22px;font-size:16px;font-weight:700;background:var(--brand);color:var(--brand-ink);text-decoration:none}.errbox{background:#171f2c;border:1px solid var(--line);border-left:4px solid #f26d6d;border-radius:10px;padding:14px 16px;margin:16px 0;font-size:15px;color:var(--ink)}footer{padding:30px 0 44px;color:var(--faint);font-size:13.5px}footer a{color:var(--dim)}</style>
+</head>
+<body>
+<div class="wrap">
+<header><a class="logo" href="index.html">Catalog<span>Fix</span></a></header>
+<h1>A row has more fields than the file has columns</h1>
+<div class="errbox">⚠️ Row 14 has 22 fields but the file has 21 columns — an unquoted comma is splitting a text field in two.</div>
+<p>CSV files use commas to separate columns — so any comma <b>inside</b> your text (a title like "Mug, Large", a description, a tag list) must be protected by wrapping the whole field in double quotes. Miss one, and every value in that row shifts one column to the right: prices land in the inventory column, SKUs land in the weight column, and the import fails or imports garbage.</p><h2>Fix it by hand</h2><ol><li>Open the file in a spreadsheet and find the row whose values look shifted.</li><li>Wrap any field containing a comma in double quotes: <code>"cotton, summer"</code>.</li><li>Escape a quote inside a quoted field by doubling it: <code>"the \"big\" mug"</code>.</li><li>Re-export as CSV (UTF-8) rather than editing the raw text if you can.</li></ol><p>This is the single most destructive CSV mistake because it corrupts columns silently — a checker that counts fields per row catches it instantly.</p>
+<div class="cta">
+<p><b>Don’t fix 400 rows by hand.</b><br>CatalogFix checks your whole file for this error — and two dozen others — in seconds, free. The corrected download is $19.</p>
+<a class="btn" href="index.html">Check my file free →</a>
+</div>
+<footer>CatalogFix — a faceless little tool for Shopify merchants. Not affiliated with Shopify Inc. · <a href="index.html">Free CSV checker</a></footer>
+</div>
+</body>
+</html>

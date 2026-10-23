@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shopify CSV Error: Price Must Be a Number — Currency Symbols & Commas</title>
+<meta name="description" content="Variant Price contains &quot;$1,299.00&quot; — Shopify prices must be plain numbers. What causes it, how to fix it by hand, and a free tool that finds and fixes it in your whole file at once.">
+<style>:root{--bg:#0b0f14;--panel:#121822;--line:#232e3f;--ink:#e8eef6;--dim:#93a3b8;--faint:#5d6f86;--brand:#2dd4a7;--brand-ink:#06231b}*{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--ink);font:16px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}.wrap{max-width:760px;margin:0 auto;padding:0 20px}header{padding:26px 0 6px}.logo{font-size:22px;font-weight:800;color:var(--ink);text-decoration:none}.logo span{color:var(--brand)}h1{font-size:clamp(26px,4.6vw,38px);line-height:1.18;letter-spacing:-.02em;margin:30px 0 14px}h2{font-size:20px;margin:28px 0 8px}p,li{color:var(--dim)}p b,li b{color:var(--ink)}ol,ul{padding-left:22px}li{margin:6px 0}code{background:#171f2c;border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-size:14px;color:var(--ink)}.cta{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;margin:30px 0;text-align:center}.cta p{margin-bottom:14px}.btn{display:inline-block;border-radius:10px;padding:13px 22px;font-size:16px;font-weight:700;background:var(--brand);color:var(--brand-ink);text-decoration:none}.errbox{background:#171f2c;border:1px solid var(--line);border-left:4px solid #f26d6d;border-radius:10px;padding:14px 16px;margin:16px 0;font-size:15px;color:var(--ink)}footer{padding:30px 0 44px;color:var(--faint);font-size:13.5px}footer a{color:var(--dim)}</style>
+</head>
+<body>
+<div class="wrap">
+<header><a class="logo" href="index.html">Catalog<span>Fix</span></a></header>
+<h1>"Variant Price" is not a valid number</h1>
+<div class="errbox">⚠️ Variant Price contains "$1,299.00" — Shopify prices must be plain numbers.</div>
+<p>Shopify's CSV importer is strict about money: <b>Variant Price</b>, <b>Variant Compare At Price</b> and <b>Cost per item</b> must be plain numbers like <code>1299.00</code>. Currency symbols, thousands separators and text all make the row fail.</p><h2>The usual offenders</h2><ul><li><code>$1,299.00</code> → <code>1299.00</code> (drop the symbol and the thousands comma)</li><li><code>12,99</code> (European decimal comma) → <code>12.99</code></li><li><code>USD 45</code> or <code>45 EUR</code> → <code>45</code></li><li>Blank price on the main variant row — every variant needs a price</li></ul><h2>Fix it by hand</h2><ol><li>Strip any currency symbol or code.</li><li>Remove commas that separate thousands; convert a decimal comma to a decimal point.</li><li>Keep at most two decimal places.</li></ol><p>Watch the compare-at price too: if it ends up <b>lower</b> than the price, the product will not display as on sale.</p>
+<div class="cta">
+<p><b>Don’t fix 400 rows by hand.</b><br>CatalogFix checks your whole file for this error — and two dozen others — in seconds, free. The corrected download is $19.</p>
+<a class="btn" href="index.html">Check my file free →</a>
+</div>
+<footer>CatalogFix — a faceless little tool for Shopify merchants. Not affiliated with Shopify Inc. · <a href="index.html">Free CSV checker</a></footer>
+</div>
+</body>
+</html>
