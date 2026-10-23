@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CatalogFix — Fix your Shopify product CSV before it breaks your import</title>
+<meta name="description" content="Free instant check of your Shopify product CSV. See every formatting problem, preview the corrections, and download a cleaned file that imports cleanly. Your file never leaves your browser.">
+<style>
+  :root{
+    --bg:#0b0f14; --panel:#121822; --panel2:#171f2c; --line:#232e3f;
+    --ink:#e8eef6; --dim:#93a3b8; --faint:#5d6f86;
+    --brand:#2dd4a7; --brand-ink:#06231b;
+    --err:#f26d6d; --warn:#f5b85c; --fix:#2dd4a7;
+    --radius:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px}
+  header{padding:26px 0 6px;display:flex;align-items:center;justify-content:space-between}
+  .logo{font-size:22px;font-weight:800;letter-spacing:-.02em}
+  .logo span{color:var(--brand)}
+  .price-note{color:var(--dim);font-size:14px}
+  .price-note b{color:var(--ink)}
+  .hero{padding:44px 0 10px;text-align:center}
+  .hero h1{font-size:clamp(30px,5.4vw,46px);line-height:1.12;letter-spacing:-.02em;font-weight:850}
+  .hero h1 em{font-style:normal;color:var(--brand)}
+  .hero p{color:var(--dim);max-width:640px;margin:16px auto 0;font-size:17px}
+  .trust{display:flex;gap:18px;justify-content:center;flex-wrap:wrap;margin-top:18px;color:var(--faint);font-size:13.5px}
+  .trust b{color:var(--dim);font-weight:600}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-top:22px}
+  #drop{border:1.6px dashed #33445e;border-radius:var(--radius);padding:42px 20px;text-align:center;cursor:pointer;transition:.15s;background:var(--panel)}
+  #drop:hover,#drop.over{border-color:var(--brand);background:var(--panel2)}
+  #drop .big{font-size:19px;font-weight:700}
+  #drop .sub{color:var(--dim);margin-top:6px;font-size:14.5px}
+  .btn{display:inline-block;border:0;border-radius:10px;padding:13px 22px;font-size:16px;font-weight:700;cursor:pointer;background:var(--brand);color:var(--brand-ink);text-decoration:none;transition:.15s}
+  .btn:hover{filter:brightness(1.08)}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn.ghost:hover{border-color:var(--brand);color:var(--brand)}
+  .btn[disabled]{opacity:.45;cursor:not-allowed}
+  .sample-link{margin-top:14px;color:var(--dim);font-size:14.5px}
+  .sample-link button{background:none;border:0;color:var(--brand);font-size:14.5px;font-weight:600;cursor:pointer;text-decoration:underline}
+  .hidden{display:none!important}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-top:22px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:center}
+  .stat .n{font-size:30px;font-weight:850;letter-spacing:-.02em}
+  .stat .l{color:var(--dim);font-size:13px;margin-top:2px}
+  .stat.err .n{color:var(--err)} .stat.warn .n{color:var(--warn)} .stat.fix .n{color:var(--fix)}
+  h2.sec{font-size:20px;font-weight:800;letter-spacing:-.01em;margin-bottom:4px}
+  .secsub{color:var(--dim);font-size:14.5px;margin-bottom:14px}
+  table{width:100%;border-collapse:collapse;font-size:14.5px}
+  th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--faint);font-size:12.5px;text-transform:uppercase;letter-spacing:.06em}
+  td .ex{color:var(--dim);font-size:13.5px}
+  td .ex s{color:var(--err);text-decoration-color:#7a3a3a}
+  td .ex b{color:var(--fix);font-weight:600}
+  .count-pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:1px 9px;font-size:13px;font-weight:700}
+  .sev{display:inline-block;border-radius:6px;padding:1px 8px;font-size:12px;font-weight:800;letter-spacing:.03em}
+  .sev.error{background:#3a1d1d;color:var(--err)} .sev.warning{background:#3a2d16;color:var(--warn)}
+  .where{color:var(--faint);font-size:13px;white-space:nowrap}
+  .paybox{text-align:center;padding:30px 22px}
+  .paybox .amount{font-size:40px;font-weight:850;letter-spacing:-.02em}
+  .paybox .per{color:var(--dim)}
+  .paybox ul{list-style:none;color:var(--dim);margin:14px auto 20px;max-width:420px;text-align:left}
+  .paybox li{padding:4px 0 4px 24px;position:relative}
+  .paybox li:before{content:"✓";position:absolute;left:0;color:var(--brand);font-weight:800}
+  .fineprint{color:var(--faint);font-size:13px;margin-top:14px}
+  .ok-banner{background:#0e2b21;border:1px solid #17573f;color:#a9ecd6;border-radius:12px;padding:16px 18px;margin-top:22px;font-size:15px}
+  .err-banner{background:#331b1b;border:1px solid #6e3232;color:#f3c1c1;border-radius:12px;padding:16px 18px;margin-top:22px;font-size:15px}
+  footer{padding:38px 0 46px;color:var(--faint);font-size:13.5px;text-align:center}
+  footer .row{margin-top:6px}
+  @media (max-width:560px){ th.hideS,td.hideS{display:none} .card{padding:16px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">Catalog<span>Fix</span></div>
+    <div class="price-note">Checking is <b>free</b> · Corrected download <b>$19</b></div>
+  </header>
+
+  <section class="hero">
+    <h1>Your Shopify CSV is about to fail.<br><em>Find out why — in seconds, for free.</em></h1>
+    <p>Upload your product CSV and CatalogFix checks it against Shopify's import rules: broken handles, bad prices, duplicate variants, invalid values, missing images. See every problem, preview every correction, then download a file that imports cleanly.</p>
+    <div class="trust">
+      <div>🔒 <b>Private by design</b> — your file never leaves your browser</div>
+      <div>⚡ <b>Instant</b> — no sign-up, no install</div>
+      <div>🛍️ Built for <b>Shopify product CSVs</b></div>
+    </div>
+  </section>
+
+  <div id="drop" tabindex="0" role="button" aria-label="Upload a Shopify product CSV file">
+    <div class="big">Drop your product CSV here, or click to choose the file</div>
+    <div class="sub">The free check runs instantly on this page. Nothing is uploaded anywhere.</div>
+    <input type="file" id="file" accept=".csv,text/csv" class="hidden">
+    <div class="sample-link">No file handy? <button id="sampleBtn" type="button">Run the check on a sample file with real mistakes →</button></div>
+  </div>
+
+  <div id="fileError" class="err-banner hidden"></div>
+
+  <section id="results" class="hidden">
+    <div class="stats" id="stats"></div>
+
+    <div id="fatalBox" class="err-banner hidden"></div>
+
+    <div class="card" id="fixCard">
+      <h2 class="sec">Corrections ready — <span id="fixCount"></span></h2>
+      <p class="secsub">These are applied automatically to your corrected file. Grouped by rule, with an example from your file.</p>
+      <table><thead><tr><th>Correction</th><th class="hideS">Example from your file</th><th style="text-align:right">Count</th></tr></thead><tbody id="fixBody"></tbody></table>
+    </div>
+
+    <div class="card" id="attnCard">
+      <h2 class="sec">Needs your eye — <span id="attnCount"></span></h2>
+      <p class="secsub">CatalogFix can't invent data, so these stay flagged in your report. Errors will make Shopify reject the row or product; warnings import but usually mean something is off.</p>
+      <table><thead><tr><th></th><th>Where</th><th>What’s wrong</th></tr></thead><tbody id="attnBody"></tbody></table>
+    </div>
+
+    <div class="card paybox" id="payCard">
+      <div class="amount">$19</div>
+      <div class="per">one-time, per corrected file — no subscription</div>
+      <ul>
+        <li>Every automatic correction above, applied</li>
+        <li>A clean, import-ready Shopify CSV (UTF-8, correct formatting)</li>
+        <li>The full problem report stays free, forever</li>
+      </ul>
+      <div id="payActions">
+        <a class="btn" id="payBtn" href="#" target="_blank" rel="noopener">Unlock my corrected file — $19</a>
+        <div class="fineprint">Secure checkout by Stripe. After payment you’ll be sent back here and your download starts.</div>
+        <div style="margin-top:12px"><button class="btn ghost" id="alreadyBtn" type="button">I’ve already paid</button></div>
+      </div>
+      <div id="downloadActions" class="hidden">
+        <button class="btn" id="downloadBtn" type="button">Download corrected CSV</button>
+        <div class="fineprint">Corrections applied. Items under “Needs your eye” are unchanged — fix those in the file and re-run the free check any time.</div>
+      </div>
+    </div>
+
+    <div class="ok-banner hidden" id="cleanBanner">This file is clean — no errors, no warnings, nothing to fix. Shopify should take it as-is. 🎉</div>
+
+    <div style="text-align:center;margin-top:18px">
+      <button class="btn ghost" id="resetBtn" type="button">Check another file</button>
+    </div>
+  </section>
+
+  <footer>
+    <div>CatalogFix — a faceless little tool for Shopify merchants and the freelancers who wrangle their catalogs.</div>
+    <div class="row">Not affiliated with Shopify Inc. Files are processed locally in your browser and are never uploaded, stored, or seen by anyone.</div>
+  </footer>
+</div>
+
+<script src="engine.js"></script>
+<script>
+(function(){
+  'use strict';
+  /* === CONFIG — set the Stripe Payment Link here when payments are connected === */
+  var CONFIG = { PAYMENT_LINK: '', PRICE: 19 };
+
+  var $ = function(id){ return document.getElementById(id); };
+  var drop = $('drop'), fileInput = $('file'), results = $('results');
+  var state = { result: null, filename: 'catalog' };
+
+  var SAMPLE = '﻿' + [
+    'handle,Title,Vendor,Tags,Published,Option1 Name,Option1 Value,Variant SKU,Variant Grams,Variant Inventory Tracker,Variant Inventory Qty,Variant Inventory Policy,Variant Fulfillment Service,Variant Price,Variant Compare At Price,Variant Requires Shipping,Variant Taxable,Image Src,Image Position,Status,Weird Column',
+    'Blue T-Shirt!,Blue T-Shirt,Acme,"cotton,  summer ,",true,Size,M,TS-M,200,Shopify,10.0,DENY,Manual,"$1,299.00",999.00,yes,1,https://example.com/a.jpg,,Active,x',
+    'hat-1,Wool Hat,Acme,winter,FALSE,,,HAT1,120,shopify,7,continue,manual,35.00,30.00,TRUE,TRUE,https://example.com/h.jpg,1,draft,x',
+    'blue t-shirt,Blue T-Shirt,Acme,,TRUE,Size,L,TS-L,200,shopify,5,deny,manual,1299.00,,TRUE,TRUE,https://example.com/b.jpg,,active,x',
+    'mug-1,,Acme,,TRUE,Color,Red,MUG1,300,shopify,3,continue,manual,12,99,TRUE,TRUE,example.com/mug.jpg,1,draft,x',
+    'mug-1,,Acme,,TRUE,Color,Red,MUG2,300,shopify,3,continue,manual,12.00,,TRUE,TRUE,,,draft,x',
+    'candle-1,Soy Candle,,home,maybe,,,CND1,150,shopify,-2,continue,manual,24.50,,TRUE,TRUE,https://example.com/c.jpg,1,Active,x',
+    ''
+  ].join('\n');
+
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function runCheck(text, filename){
+    state.filename = (filename || 'catalog').replace(/\.csv$/i,'');
+    var r = window.CatalogFix.analyze(text);
+    state.result = r;
+    render(r);
+  }
+
+  function render(r){
+    var s = r.summary;
+    results.classList.remove('hidden');
+    $('stats').innerHTML =
+      stat(s.products, 'Products') + stat(s.rows, 'Rows checked') +
+      stat(s.errors, 'Errors', 'err') + stat(s.warnings, 'Warnings', 'warn') + stat(s.fixes, 'Auto-fixes ready', 'fix');
+
+    var fatal = r.issues.filter(function(i){ return i.severity==='fatal'; });
+    var fb = $('fatalBox');
+    if (fatal.length){
+      fb.classList.remove('hidden');
+      fb.textContent = 'This file can\u2019t be imported or fixed as-is: ' + fatal[0].message;
+    } else fb.classList.add('hidden');
+
+    // fixes grouped by message template
+    var groups = {}, order = [];
+    r.issues.filter(function(i){ return i.severity==='fix'; }).forEach(function(i){
+      var key = i.message;
+      if (!groups[key]) { groups[key] = { message: i.message, example: i, count: 0 }; order.push(key); }
+      groups[key].count++;
+      if (!groups[key].example.before && i.before) groups[key].example = i;
+    });
+    $('fixCount').textContent = s.fixes + (s.fixes===1?' fix':' fixes');
+    $('fixBody').innerHTML = order.map(function(k){
+      var g = groups[k];
+      var ex = g.example.before ? '<s>'+esc(g.example.before)+'</s> &nbsp;→&nbsp; <b>'+esc(g.example.after)+'</b>' : '<span style="color:var(--faint)">applied throughout the file</span>';
+      return '<tr><td>'+esc(g.message)+'</td><td class="hideS"><span class="ex">'+ex+'</span></td><td style="text-align:right"><span class="count-pill">'+g.count+'</span></td></tr>';
+    }).join('') || '<tr><td colspan="3" style="color:var(--dim)">No automatic corrections needed.</td></tr>';
+    $('fixCard').style.display = s.fixes ? '' : 'none';
+
+    var attn = r.issues.filter(function(i){ return i.severity==='error' || i.severity==='warning'; });
+    $('attnCount').textContent = attn.length + (attn.length===1?' item':' items');
+    $('attnBody').innerHTML = attn.map(function(i){
+      var where = (i.row ? 'Row '+i.row : 'File') + (i.handle ? ' · '+esc(i.handle) : '') + (i.column ? ' · '+esc(i.column) : '');
+      return '<tr><td><span class="sev '+i.severity+'">'+i.severity.toUpperCase()+'</span></td><td class="where">'+where+'</td><td>'+esc(i.message)+'</td></tr>';
+    }).join('') || '<tr><td colspan="3" style="color:var(--dim)">Nothing needs your attention.</td></tr>';
+    $('attnCard').style.display = attn.length ? '' : 'none';
+
+    var clean = !fatal.length && s.errors===0 && s.warnings===0 && s.fixes===0;
+    $('cleanBanner').classList.toggle('hidden', !clean);
+    $('payCard').style.display = (fatal.length || clean) ? 'none' : '';
+
+    if (isUnlocked()) showDownload(); else showPay();
+    results.scrollIntoView({ behavior:'smooth', block:'start' });
+  }
+  function stat(n, l, cls){ return '<div class="stat '+(cls||'')+'"><div class="n">'+n+'</div><div class="l">'+l+'</div></div>'; }
+
+  function isUnlocked(){
+    try {
+      if (/[?&]paid=1/.test(location.search)) { localStorage.setItem('cf_paid','1'); return true; }
+      return localStorage.getItem('cf_paid') === '1';
+    } catch(e){ return false; }
+  }
+  function showDownload(){ $('payActions').classList.add('hidden'); $('downloadActions').classList.remove('hidden'); }
+  function showPay(){ $('downloadActions').classList.add('hidden'); $('payActions').classList.remove('hidden'); }
+
+  $('payBtn').addEventListener('click', function(e){
+    if (!CONFIG.PAYMENT_LINK){ e.preventDefault(); alert('Checkout is being connected right now — please check back shortly. The free check above is fully working.'); }
+    else { $('payBtn').href = CONFIG.PAYMENT_LINK; }
+  });
+  $('alreadyBtn').addEventListener('click', function(){
+    try { localStorage.setItem('cf_paid','1'); } catch(e){}
+    showDownload();
+  });
+  $('downloadBtn').addEventListener('click', function(){
+    if (!state.result) return;
+    var csv = window.CatalogFix.correctedCSV(state.result);
+    var blob = new Blob([csv], { type:'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = state.filename + '-fixed.csv';
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+  });
+  $('resetBtn').addEventListener('click', function(){
+    results.classList.add('hidden'); state.result = null; fileInput.value='';
+    window.scrollTo({ top:0, behavior:'smooth' });
+  });
+
+  function handleFile(f){
+    var err = $('fileError'); err.classList.add('hidden');
+    if (!f) return;
+    if (f.size > 25 * 1024 * 1024){ err.textContent = 'That file is over 25 MB — larger than a Shopify product CSV should be. Export a products-only CSV and try again.'; err.classList.remove('hidden'); return; }
+    var reader = new FileReader();
+    reader.onload = function(){ runCheck(String(reader.result || ''), f.name); };
+    reader.onerror = function(){ err.textContent = 'Could not read that file. Please try again.'; err.classList.remove('hidden'); };
+    reader.readAsText(f);
+  }
+  drop.addEventListener('click', function(e){ if (e.target.id !== 'sampleBtn') fileInput.click(); });
+  drop.addEventListener('keydown', function(e){ if (e.key==='Enter' || e.key===' '){ e.preventDefault(); fileInput.click(); } });
+  fileInput.addEventListener('change', function(){ handleFile(fileInput.files[0]); });
+  ['dragover','dragenter'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add('over'); }); });
+  ['dragleave','drop'].forEach(function(ev){ drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove('over'); }); });
+  drop.addEventListener('drop', function(e){ var f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; handleFile(f); });
+  $('sampleBtn').addEventListener('click', function(e){ e.stopPropagation(); runCheck(SAMPLE, 'sample-catalog.csv'); });
+})();
+</script>
+</body>
+</html>
